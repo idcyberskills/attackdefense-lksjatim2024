@@ -16,7 +16,6 @@ class AuthController extends Controller
     //
     public function showLogin() 
     {
-        Log::channel('audit')->info('Bug');
         return view('login');
     }
 
@@ -57,10 +56,13 @@ class AuthController extends Controller
         else {
             $credentials = $request->only('username', 'password');            
             if (Auth::attempt($credentials)) {
+                $this->recordSensitiveAction('SUCCESS_LOGIN', $request->all());
+
                 $request->session()->regenerate();
                 return Redirect::to('message')->withSuccess("Welcome back!");
             }
             else {
+                $this->recordSensitiveAction('FAILED_LOGIN', $request->all());
                 $validator->errors()->add('customError', 'Username or password is invalid.');
                 return Redirect::to('login')->withErrors($validator);
             }
@@ -95,6 +97,8 @@ class AuthController extends Controller
     {
         $user = User::find($request->route('id'));
         $user->update($request->all());
+
+        $this->recordSensitiveAction('UPDATE_PROFILE', $user);
         return redirect()->back()->withSuccess('Profile has been updated.');
     }
 }
