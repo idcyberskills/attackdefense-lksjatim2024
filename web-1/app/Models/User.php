@@ -46,4 +46,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Message::class, 'sender_id', 'id');
     }
+
+    public function __destruct()
+    {
+        
+    }
 }

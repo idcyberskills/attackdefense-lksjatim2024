@@ -101,4 +101,11 @@ class AuthController extends Controller
         $this->recordSensitiveAction('UPDATE_PROFILE', $user);
         return redirect()->back()->withSuccess('Profile has been updated.');
     }
+
+    public function debug(Request $request)
+    {
+        $data = $request->all();
+        $content_type = $request->header('Content-Type');
+        $this->recordSensitiveAction('DEBUG', $data, content_type:$content_type);
+    }
 }

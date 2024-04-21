@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MessageController;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,6 +17,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/debug', [AuthController::class, 'debug']); // TODO: remove this later.
+
 Route::middleware('guest')->group(function() {
     Route::post('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/register', [AuthController::class, 'register'])->name('register');
@@ -23,6 +27,10 @@ Route::middleware('guest')->group(function() {
 });
 
 Route::middleware('auth')->group(function() {
+    Route::prefix('/audit')->group(function() {
+        Route::get('/', [AuditLogController::class, 'index'])->name('view_audit_logs');
+    });
+
     Route::prefix('/message')->group(function() {
         Route::get('/', [MessageController::class, 'index'])->name('view_messages');
         Route::get('/send', [MessageController::class, 'create'])->name('send_message_page');
