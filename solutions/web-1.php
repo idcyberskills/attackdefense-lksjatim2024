@@ -34,7 +34,8 @@
 
     /*
     TLDR;
-    1. SQL Injection in custom audit logging
-    2. Object Injection in displaying the audit logs
+    1. SQL Injection in User-Agent header, used by the custom audit logging
+    2. Object Injection (PHP Deserialization) in displaying audit logs
     3. Use SQLi to insert malicious serialized payload into the database
+    4. The payload will be deserialized automatically in /audit page upon visited
     */
