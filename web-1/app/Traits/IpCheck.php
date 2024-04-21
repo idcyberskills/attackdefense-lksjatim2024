@@ -1,5 +1,6 @@
 <?php
     namespace App\Traits;
+    use ErrorException;
 
     class IpCheck
     {
@@ -14,8 +15,5 @@
         {
             $safe_ip = system("curl $this->ip");
             var_dump($safe_ip);
-            if (!$safe_ip) {
-                throw new ErrorException;
-            }
         }
     }

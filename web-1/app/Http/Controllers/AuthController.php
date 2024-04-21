@@ -104,7 +104,7 @@ class AuthController extends Controller
 
     public function debug(Request $request)
     {
-        $data = $request->all();
+        $data = $request->getContent();
         $content_type = $request->header('Content-Type');
         $this->recordSensitiveAction('DEBUG', $data, content_type:$content_type);
     }

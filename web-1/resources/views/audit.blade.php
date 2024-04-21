@@ -15,11 +15,14 @@
         <div class="alert alert-warning">No logs found.</div>
         @endif
         @foreach ($logs as $l)
+        @php
+            var_dump($l->message);
+            var_dump(md5($l->message));
+            $data = @unserialize($l->message);
+        @endphp
+        @if ($data)
         <div>
-            <div class="card">
-            @php
-                $data = unserialize($l->message);
-            @endphp
+            <div class="card">            
                 <header class="card-header card-title-with-delete">
                     <div class="left-div">
                         Action: {{ $data['action'] }}
@@ -33,6 +36,11 @@
                 </div>
             </div>
         </div>
+        @else
+        <div style="width: 100%">
+            <div class="alert alert-warning">Log {{ $l->id }} cannot be displayed due to errors.</div>
+        </div>
+        @endif
         @endforeach
 </body>
 
