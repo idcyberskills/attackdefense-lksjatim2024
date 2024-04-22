@@ -13,22 +13,37 @@ router.get('/login', function(req, res, next) {
   req.session.successMessage = null;
   req.session.errorMessage = null;
 
-  res.render('index', { successMessage, errorMessage });
+  res.render('login', { successMessage, errorMessage });
 });
 
 router.get('/register', function(req, res, next) {
-  const successMessage = req.session.successMessage;
-  const errorMessage = req.session.errorMessage;
+  const successMessage = req.session.successMessage || '';
+  const errorMessage = req.session.errorMessage || '';
 
   req.session.successMessage = null;
   req.session.errorMessage = null;
 
-  res.render('login', { successMessage, errorMessage });
+  res.render('register', { successMessage, errorMessage });
 });
 
-router.post('/login', function(req, res, next) {
-  
-  res.redirect('/index');
+router.post('/login', async function(req, res, next) {
+  const { username, password } = req.body;
+
+  const user = await User.findOne({ where: { username } });
+
+  if (!user) {
+    req.session.errorMessage = "Invalid username or password!";
+    return res.redirect('/login');
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+
+  if (!isPasswordValid) {
+    req.session.errorMessage = "Invalid username or password!";
+    return res.redirect('/login');
+  }
+
+  return res.redirect('/home');
 });
 
 router.post('/register', async function(req, res, next) {
@@ -40,12 +55,12 @@ router.post('/register', async function(req, res, next) {
     User.create(user)
       .then((data) => {
         req.session.successMessage = 'Registration successful! Please login.';
+        return res.redirect('/login');
       })
       .catch((err) => {
-        console.log(err);
-      });
-
-    res.redirect('/login');
+        req.session.errorMessage = `Error: ${err}`;
+        return res.redirect('/register');
+      })
 });
 
 module.exports = router;
