@@ -6,6 +6,16 @@ const User = db.users;
 
 var router = express.Router();
 
+router.get('/home', function(req, res, next) {
+  const successMessage = req.session.successMessage;
+  const errorMessage = req.session.errorMessage;
+
+  req.session.successMessage = null;
+  req.session.errorMessage = null;
+
+  res.render('home', { successMessage, errorMessage });
+});
+
 router.get('/login', function(req, res, next) {
   const successMessage = req.session.successMessage;
   const errorMessage = req.session.errorMessage;
@@ -42,6 +52,12 @@ router.post('/login', async function(req, res, next) {
     req.session.errorMessage = "Invalid username or password!";
     return res.redirect('/login');
   }
+
+  req.session.user = {
+    id: user.id,
+    username: user.username,
+    email: user.email
+  };
 
   return res.redirect('/home');
 });
