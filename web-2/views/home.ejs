@@ -29,13 +29,16 @@
                         <h1>Your API Token</h1>
                     </div>
                     <div class="right-div">
-                        <a href="/message/delete/{{ $m->id }}"><button type="button" class="btn btn-primary"><i class="fa fa-refresh"></i></button></a>
+                        <a href="/generate-token"><button type="button" class="btn btn-primary"><i class="fa fa-refresh">Get Token</i></button></a>
                     </div>
                 </header>
-                <header class="card-header message-title">You have no token, yet. Create one now!</header>
-                <div class="card-content">
-                    <div class="inner">Generated at 2024-10-10 15:07:11</div>
-                </div>
+                <% tokens.forEach(function(t) { %>
+                    <header class="card-header message-title"><%= t.token %></header>
+                    <div class="card-content">
+                        <div class="inner">Generated at <%= t.createdAt %></div>
+                    </div>
+                <% }); %>
+                
             </div>
         </div>
 	</div>

@@ -1,19 +1,50 @@
 var express = require('express');
 const bcrypt = require('bcryptjs');
+var nJwt = require('../lib/njwt');
 
 const db = require("../models");
+const authenticateJWT = require('../middleware/token');
+const isLoggedIn = require('../middleware/session');
 const User = db.users;
+const Token = db.tokens;
 
 var router = express.Router();
 
-router.get('/home', function(req, res, next) {
+router.get('/generate-token', isLoggedIn, function(req, res, next) {
+  var signingKey = req.app.signingKey;
+  var claims = req.session.claims;
+  var jwt = nJwt.create(claims, signingKey);
+  var user_id = req.session.user.id;
+
+  let token = { user_id, token: jwt.compact() };
+
+  Token.create(token)
+      .then((data) => {
+        req.session.successMessage = 'Token has been generated.';
+      })
+      .catch((err) => {
+        req.session.errorMessage = `Error: ${err}`;
+      })
+      .finally(() => {
+        return res.redirect('/home');
+      });
+});
+
+router.post('/system-execute', authenticateJWT, function(req, res, next) {
+  
+
+});
+
+router.get('/home', isLoggedIn, async function(req, res, next) {
   const successMessage = req.session.successMessage;
   const errorMessage = req.session.errorMessage;
 
   req.session.successMessage = null;
   req.session.errorMessage = null;
 
-  res.render('home', { successMessage, errorMessage });
+  let tokens = await Token.findAll({ user_id: req.session.user.id });
+
+  res.render('home', { successMessage, errorMessage, tokens });
 });
 
 router.get('/login', function(req, res, next) {
@@ -56,7 +87,11 @@ router.post('/login', async function(req, res, next) {
   req.session.user = {
     id: user.id,
     username: user.username,
-    email: user.email
+    email: user.email,
+    claims: {
+      sub: user.id,
+      scope: "user"
+    }
   };
 
   return res.redirect('/home');

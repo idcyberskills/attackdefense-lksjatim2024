@@ -23,9 +23,12 @@ app.use(session({
     secret: 'your_secret_key', // Change this to a secure random string
     resave: false,
     saveUninitialized: true
-  }));
-  
+}));
 
+var secureRandom = require('secure-random');
+var signingKey = secureRandom(256, {type: 'Buffer'}); // Create a highly random byte array of 256 bytes
+app.signingKey = signingKey;
+  
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
