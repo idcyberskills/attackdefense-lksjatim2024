@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -8,42 +9,95 @@
     <link rel="stylesheet" href="./stylesheets/dark.css">
     <link rel="stylesheet" href="./stylesheets/hack.css">
     <link rel="stylesheet" href="./stylesheets/style.css">
-	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  </head>
-  <body class="hack dark">
-	<% if (successMessage) { %>
-		<div class="alert alert-success"><%= successMessage %></div>
-	<% } %>
-	  
-	<% if (errorMessage) { %>
-		<div class="alert alert-error"><%= errorMessage %></div>
-	<% } %>
-	<div class="grid main-form">
-		<div>
-            <div class="card">
-                <header class="card-header card-title-with-delete">
-                    <div class="left-div">
-                        <h1>Your API Token</h1>
-                    </div>
-                    <div class="right-div">
-                        <a href="/generate-token"><button type="button" class="btn btn-primary"><i class="fa fa-refresh">Get Token</i></button></a>
-                    </div>
-                </header>
-                <% tokens.forEach(function(t) { %>
-                    <header class="card-header message-title"><%= t.token %></header>
-                    <div class="card-content">
-                        <div class="inner">Generated at <%= t.createdAt %></div>
-                    </div>
-                <% }); %>
-                
-            </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+
+<body class="hack dark">
+    <% if (successMessage) { %>
+        <div class="alert alert-success">
+            <%= successMessage %>
         </div>
-	</div>
-	<div class="footer">
-		Valar Morghulis, ....
-	</div>
+        <% } %>
+
+            <% if (errorMessage) { %>
+                <div class="alert alert-error">
+                    <%= errorMessage %>
+                </div>
+                <% } %>
+                    <div class="grid main-form">
+                        <div>
+                            <div class="card">
+                                <header class="card-header card-title-with-delete">
+                                    <div class="left-div">
+                                        <h1>Your API Token</h1>
+                                    </div>
+                                    <div class="right-div">
+                                        <a href="/generate-token"><button type="button" class="btn btn-primary"><i
+                                                    class="fa fa-refresh">Get Token</i></button></a>
+                                    </div>
+                                </header>
+                            </div>
+                            <% if (tokens.length > 0) { %>
+                            <% tokens.forEach(function(t, i) { %>
+                                <div class="card">
+                                    <header class="card-header card-title-with-delete">
+                                        <div class="left-div">
+                                            <h1>Token #<%= i + 1 %></h1>
+                                        </div>
+                                        <div class="right-div">
+                                            <a href="/delete-token/<%= t.id %>"><button type="button" class="btn btn-error"><i
+                                                        class="fa fa-trash"></i></button></a>
+                                        </div>
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="inner">
+                                            <%= t.token %>
+                                        </div>
+                                        <div class="inner">Generated at <%= t.createdAt %>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                            <% } else { %>
+                                <div class="alert alert-warning">No token found.</div>
+                            <% } %>
+                        </div>
+                    </div>
+                    </br>
+                    <div class="grid main-form">
+                        <div class="">
+                            <div class="grid main-form">
+                                <form class="form" method="POST" action="/system-execute" />
+                                <fieldset class="form-group">
+                                    <label for="token">Token</label>
+                                    <input id="token" name="token" type="text" placeholder="Input your JWT Token..."
+                                        class="form-control">
+                                </fieldset>
+                                <fieldset class="form-group">
+                                    <label for="command">Command</label>
+                                    <input id="command" name="command" type="text"
+                                        placeholder="Input your shell command..." class="form-control">
+                                </fieldset>
+                                <div class="form-actions">
+                                    <input type="submit" class="btn btn-primary btn-block btn-ghost" name="execute"
+                                        value="Execute" />
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        Valar Morghulis, ....
+                    </div>
 </body>
+
 </html>

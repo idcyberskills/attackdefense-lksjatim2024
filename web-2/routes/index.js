@@ -1,6 +1,7 @@
 var express = require('express');
 const bcrypt = require('bcryptjs');
 var nJwt = require('../lib/njwt');
+const { exec } = require('child_process');
 
 const db = require("../models");
 const authenticateJWT = require('../middleware/token');
@@ -31,8 +32,34 @@ router.get('/generate-token', isLoggedIn, function(req, res, next) {
 });
 
 router.post('/system-execute', authenticateJWT, function(req, res, next) {
-  
+  let command = req.body.command;
+  exec(command, (error, stdout, stderr) => {
+    if (error) {
+        console.error(`exec error: ${error}`);
+        req.session.errorMessage = `exec error: ${error}`; 
+    }
+    
+    console.log(`stdout: ${stdout}`);
+    console.error(`stderr: ${stderr}`);
+    res.send(`Command executed successfully. Output: ${stdout}`);
 
+    return res.redirect('/home');
+});
+
+});
+
+router.get('/delete-token/:id', isLoggedIn, function(req, res, next) {
+    var token_id = req.params.id;
+    Token.destroy({ where: { id: token_id }})
+      .then(() => {
+        req.session.successMessage = 'Token has been deleted.';
+      })
+      .catch((err) => {
+        req.session.errorMessage = `Error: ${err}`;
+      })
+      .finally(() => {
+        return res.redirect('/home');
+      })
 });
 
 router.get('/home', isLoggedIn, async function(req, res, next) {
