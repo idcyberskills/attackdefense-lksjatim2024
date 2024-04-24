@@ -12,8 +12,12 @@ const authenticateJWT = (req, res, next) => {
         if (err) {
             return res.status(401).json({ error: `Unauthorized: Invalid token. Error: ${err}` });
         }else{
-            // TODO: check scope admin only
-            next();
+            if (verifiedJwt.body.scope === "admin") {
+                next();
+            }
+            else {
+                return res.status(401).json({ error: `Unauthorized: you don't have admin privilege.` });
+            }
         }
       });
 };

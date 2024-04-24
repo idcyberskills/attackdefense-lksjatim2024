@@ -13,7 +13,7 @@ var router = express.Router();
 
 router.get('/generate-token', isLoggedIn, function (req, res, next) {
   var signingKey = req.app.signingKey;
-  var claims = req.session.claims;
+  var claims = req.session.user.claims;
   var jwt = nJwt.create(claims, signingKey);
   var user_id = req.session.user.id;
 
@@ -37,7 +37,7 @@ router.get('/generate-token', isLoggedIn, function (req, res, next) {
   })
 });
 
-router.post('/system-execute', authenticateJWT, function (req, res, next) {
+router.post('/system-execute', isLoggedIn, authenticateJWT, function (req, res, next) {
   let command = req.body.command;
   exec(command, (error, stdout, stderr) => {
     if (error) {
