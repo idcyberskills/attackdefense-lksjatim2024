@@ -17,7 +17,7 @@
         }
     }
 
-    $command = "touch gomba.txt";
+    $command = "id > /tmp/test.txt";
     $gadget = new IpCheck("127.0.0.1; $command");
 
     $wrapper = [

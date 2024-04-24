@@ -17,7 +17,7 @@ class AuditLoggerHandler extends AbstractProcessingHandler
         $context = '';
         
         $query = "INSERT INTO audit_logs (remote_addr, user_agent, message, context) VALUES ('$remote_addr', '$user_agent', '$message', '$context')";
-        var_dump($query);
+        // var_dump($query);
         DB::insert($query);
     }
 }

@@ -16,8 +16,6 @@
         @endif
         @foreach ($logs as $l)
         @php
-            var_dump($l->message);
-            var_dump(md5($l->message));
             $data = @unserialize($l->message);
         @endphp
         @if ($data)

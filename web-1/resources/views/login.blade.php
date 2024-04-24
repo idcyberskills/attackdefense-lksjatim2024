@@ -28,7 +28,7 @@
 		</form>
 	</div>
 	<div class="footer">
-		Valar Morghulis, ....
+		The Hacker's Phonebook
 	</div>
 </body>
 </html>
