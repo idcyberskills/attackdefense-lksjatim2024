@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/debug', [AuthController::class, 'debug']); // TODO: remove this later.
+Route::get('/debug', [AuthController::class, 'debug']);
 
 Route::middleware('guest')->group(function() {
     Route::post('/login', [AuthController::class, 'login'])->name('login');
