@@ -12,6 +12,7 @@ const authenticateJWT = (req, res, next) => {
         if (err) {
             return res.status(401).json({ error: `Unauthorized: Invalid token. Error: ${err}` });
         }else{
+            // TODO: check scope admin only
             next();
         }
       });

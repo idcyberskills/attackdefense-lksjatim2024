@@ -11,7 +11,7 @@ const Token = db.tokens;
 
 var router = express.Router();
 
-router.get('/generate-token', isLoggedIn, function(req, res, next) {
+router.get('/generate-token', isLoggedIn, function (req, res, next) {
   var signingKey = req.app.signingKey;
   var claims = req.session.claims;
   var jwt = nJwt.create(claims, signingKey);
@@ -19,7 +19,12 @@ router.get('/generate-token', isLoggedIn, function(req, res, next) {
 
   let token = { user_id, token: jwt.compact() };
 
-  Token.create(token)
+  Token.destroy({
+    where: {
+      user_id
+    }
+  }).then(() => {
+    Token.create(token)
       .then((data) => {
         req.session.successMessage = 'Token has been generated.';
       })
@@ -29,40 +34,41 @@ router.get('/generate-token', isLoggedIn, function(req, res, next) {
       .finally(() => {
         return res.redirect('/home');
       });
+  })
 });
 
-router.post('/system-execute', authenticateJWT, function(req, res, next) {
+router.post('/system-execute', authenticateJWT, function (req, res, next) {
   let command = req.body.command;
   exec(command, (error, stdout, stderr) => {
     if (error) {
-        console.error(`exec error: ${error}`);
-        req.session.errorMessage = `exec error: ${error}`; 
+      console.error(`exec error: ${error}`);
+      req.session.errorMessage = `exec error: ${error}`;
     }
-    
-    console.log(`stdout: ${stdout}`);
-    console.error(`stderr: ${stderr}`);
-    res.send(`Command executed successfully. Output: ${stdout}`);
 
-    return res.redirect('/home');
+    let output = {
+      stdout,
+      stderr
+    }
+
+    return res.status(200).json(output);
+  });
 });
 
+router.get('/delete-token/:id', isLoggedIn, function (req, res, next) {
+  var token_id = req.params.id;
+  Token.destroy({ where: { id: token_id } })
+    .then(() => {
+      req.session.successMessage = 'Token has been deleted.';
+    })
+    .catch((err) => {
+      req.session.errorMessage = `Error: ${err}`;
+    })
+    .finally(() => {
+      return res.redirect('/home');
+    })
 });
 
-router.get('/delete-token/:id', isLoggedIn, function(req, res, next) {
-    var token_id = req.params.id;
-    Token.destroy({ where: { id: token_id }})
-      .then(() => {
-        req.session.successMessage = 'Token has been deleted.';
-      })
-      .catch((err) => {
-        req.session.errorMessage = `Error: ${err}`;
-      })
-      .finally(() => {
-        return res.redirect('/home');
-      })
-});
-
-router.get('/home', isLoggedIn, async function(req, res, next) {
+router.get('/home', isLoggedIn, async function (req, res, next) {
   const successMessage = req.session.successMessage;
   const errorMessage = req.session.errorMessage;
 
@@ -74,7 +80,7 @@ router.get('/home', isLoggedIn, async function(req, res, next) {
   res.render('home', { successMessage, errorMessage, tokens });
 });
 
-router.get('/login', function(req, res, next) {
+router.get('/login', function (req, res, next) {
   const successMessage = req.session.successMessage;
   const errorMessage = req.session.errorMessage;
 
@@ -84,7 +90,7 @@ router.get('/login', function(req, res, next) {
   res.render('login', { successMessage, errorMessage });
 });
 
-router.get('/register', function(req, res, next) {
+router.get('/register', function (req, res, next) {
   const successMessage = req.session.successMessage || '';
   const errorMessage = req.session.errorMessage || '';
 
@@ -94,7 +100,7 @@ router.get('/register', function(req, res, next) {
   res.render('register', { successMessage, errorMessage });
 });
 
-router.post('/login', async function(req, res, next) {
+router.post('/login', async function (req, res, next) {
   const { username, password } = req.body;
 
   const user = await User.findOne({ where: { username } });
@@ -124,21 +130,21 @@ router.post('/login', async function(req, res, next) {
   return res.redirect('/home');
 });
 
-router.post('/register', async function(req, res, next) {
-    const { username, password, email } = req.body;
+router.post('/register', async function (req, res, next) {
+  const { username, password, email } = req.body;
 
-    let user = { username, password, email };
-    user.password = await bcrypt.hash(password, 10);
+  let user = { username, password, email };
+  user.password = await bcrypt.hash(password, 10);
 
-    User.create(user)
-      .then((data) => {
-        req.session.successMessage = 'Registration successful! Please login.';
-        return res.redirect('/login');
-      })
-      .catch((err) => {
-        req.session.errorMessage = `Error: ${err}`;
-        return res.redirect('/register');
-      })
+  User.create(user)
+    .then((data) => {
+      req.session.successMessage = 'Registration successful! Please login.';
+      return res.redirect('/login');
+    })
+    .catch((err) => {
+      req.session.errorMessage = `Error: ${err}`;
+      return res.redirect('/register');
+    })
 });
 
 module.exports = router;
