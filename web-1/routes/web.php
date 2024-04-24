@@ -18,6 +18,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/debug', [AuthController::class, 'debug']);
+Route::get('/', function() {
+    return redirect()->route('view_messages')
+});
 
 Route::middleware('guest')->group(function() {
     Route::post('/login', [AuthController::class, 'login'])->name('login');
