@@ -22,6 +22,8 @@ db.sequelize = sequelize;
 db.users = require('./user.model')(sequelize, Sequelize);
 db.tokens = require('./token.model')(sequelize, Sequelize);
 
-// db.users.truncate();
-// db.tokens.truncate();
+db.users.truncate();
+db.tokens.truncate();
+db.sequelize.sync();
+
 module.exports = db;
