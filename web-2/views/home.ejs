@@ -34,54 +34,9 @@
                 </div>
                 <% } %>
                     <div class="grid main-form">
-                        <div>
-                            <div class="card">
-                                <header class="card-header card-title-with-delete">
-                                    <div class="left-div">
-                                        <h1>Secure Server Control</h1>
-                                    </div>
-                                    <div class="right-div">
-                                        <a href="/generate-token"><button type="button" class="btn btn-primary"><i
-                                                    class="fa fa-refresh">Get Token</i></button></a>
-                                    </div>
-                                </header>
-                            </div>
-                            <% if (tokens.length > 0) { %>
-                            <% tokens.forEach(function(t, i) { %>
-                                <div class="card">
-                                    <header class="card-header card-title-with-delete">
-                                        <div class="left-div">
-                                            <h1>Your API Token</h1>
-                                        </div>
-                                        <div class="right-div">
-                                            <a href="/delete-token/<%= t.id %>"><button type="button" class="btn btn-error"><i
-                                                        class="fa fa-trash"></i></button></a>
-                                        </div>
-                                    </header>
-                                    <div class="card-content">
-                                        <div class="inner">
-                                            <%= t.token %>
-                                        </div>
-                                        <div class="inner">Generated at <%= t.createdAt %>
-                                        </div>
-                                    </div>
-                                </div>
-                            <% }); %>
-                            <% } else { %>
-                                <div class="alert alert-warning">No token found.</div>
-                            <% } %>
-                        </div>
-                    </div>
-                    </br>
-                    <div class="grid main-form">
                         <div class="">
                             <div class="grid main-form">
                                 <form class="form" method="POST" action="/system-execute" />
-                                <fieldset class="form-group">
-                                    <label for="token">Token</label>
-                                    <input id="token" name="token" type="text" placeholder="Input your JWT Token..."
-                                        class="form-control">
-                                </fieldset>
                                 <fieldset class="form-group">
                                     <label for="command">Command</label>
                                     <input id="command" name="command" type="text"
@@ -96,7 +51,7 @@
                         </div>
                     </div>
                     <div class="footer">
-                        Valar Morghulis, ....
+                        This site is intended to be used by administrator only. Any violation will be reported.
                     </div>
 </body>
 

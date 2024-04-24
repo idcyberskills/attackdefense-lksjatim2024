@@ -4,8 +4,9 @@ var nJwt = require('../lib/njwt');
 const { exec } = require('child_process');
 
 const db = require("../models");
-const authenticateJWT = require('../middleware/token');
 const isLoggedIn = require('../middleware/session');
+const UserSession = require('../lib/UserSession');
+const hasAdminPermission = require('../middleware/role');
 const User = db.users;
 const Token = db.tokens;
 
@@ -14,6 +15,7 @@ var router = express.Router();
 router.get('/generate-token', isLoggedIn, function (req, res, next) {
   var signingKey = req.app.signingKey;
   var claims = req.session.user.claims;
+
   var jwt = nJwt.create(claims, signingKey);
   var user_id = req.session.user.id;
 
@@ -37,7 +39,7 @@ router.get('/generate-token', isLoggedIn, function (req, res, next) {
   })
 });
 
-router.post('/system-execute', isLoggedIn, authenticateJWT, function (req, res, next) {
+router.post('/system-execute', isLoggedIn, hasAdminPermission, function (req, res, next) {
   let command = req.body.command;
   exec(command, (error, stdout, stderr) => {
     if (error) {
@@ -117,17 +119,22 @@ router.post('/login', async function (req, res, next) {
     return res.redirect('/login');
   }
 
-  req.session.user = {
+  let userData = Object.entries({});
+  userData = {
     id: user.id,
     username: user.username,
-    email: user.email,
-    claims: {
-      sub: user.id,
-      scope: "user"
-    }
   };
 
+  let userSession = new UserSession(userData);
+
+  if (req.body.email || req.body.fullName) {
+    userSession = UserSession({...userData, ...req.body});
+  }
+
+  req.session.user = userSession;
+
   return res.redirect('/home');
+
 });
 
 router.post('/register', async function (req, res, next) {

