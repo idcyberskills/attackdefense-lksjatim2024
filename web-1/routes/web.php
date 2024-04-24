@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/debug', [AuthController::class, 'debug']);
 Route::get('/', function() {
-    return redirect()->route('view_messages')
+    return redirect()->route('view_messages');
 });
 
 Route::middleware('guest')->group(function() {
